@@ -1,12 +1,25 @@
 ## Changelog - Extension
 
-##### 3.12.1.0
+##### 3.13.0.0
+**Neu**
+- GEX Güter Verbrauch
+	- Es kann ein Schwellwert angegeben werden.
+	- Wenn bei Freischaltung der GEX Stufe der prozentuale Güterverbrauch größer ist als die Schwelle, wird eine Box geöffnet in der die 10 größten prozentualen Verbrauche vom Gildenvorrat angegeben werden
+	- Aktivierung in den Einstellungen!
 
 **Update**
-- Effizienz:
-	- Neue Filter für LG und engeschränkte Gebäude
-- Stadtübersicht:
+- Effizienz
+	- Neue Filter für LG und eingeschränkte Gebäude
+- Stadtübersicht
 	- Gebäudeliste für Siedlungen und Kolonien hinzugefügt
+- Shop Assistent
+	- Seltenheitsgrad des Angebots hinzugefügt
+	- Bestand an Kaufwährung hinzugefügt
+	- sind noch keine Favoriten ausgewählt, wird der Filter automatisch deaktiviert
+- Blaue Galaxy
+	- Berücksichtigt nun auch große FP-Pakete
+- Gebäude Tooltip
+	- wenn Fragmente produziert werden, werden nun auch die Anzahl an benötigter Fragmente angezeigt
 
 **Bugfix**
 - Eigenanteilsrechner

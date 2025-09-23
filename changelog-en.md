@@ -1,12 +1,25 @@
 ## Changelog - Extension
 
-##### 3.12.1.0
+##### 3.13.0.0
+**New**
+- GE Goods Use
+	- A threshold can be given
+	- If upon opening the GE unlock dialogue the precentual goods use is higher than the threshold, a box is generated listing the percentual goods use in relation to the treasury stock.
+	- Activate in settings!
 
 **Update**
-- Efficiency:
+- Efficiency
 	- Added filters for GBs and limited buildings
-- Citymap:
+- Citymap
 	- Added building list to outposts and settlements
+- Shop Assist
+	- Added rarity of offer
+	- Added current stock of shop ressources
+	- When no favourites are selected yet, the favourites filter is deactivated
+- Blue Galaxy
+	- Now accounts for large FP Packages
+- Building Tooltip
+	- if fragments are produced the amount of needed fragments is now displayed as well
 
 **Bugfix**
 - OwnPart Calculator
