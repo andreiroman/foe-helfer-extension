@@ -377,13 +377,13 @@ let CityMap = {
 					left: xx + 'em',
 					top: yy + 'em'
 				})
-				.attr('title', d['name'] + ', ' + BuildingSize['xsize']+ 'x' +BuildingSize['ysize'])
+				.attr('title', d['name'] + ', ' + BuildingSize['ysize']+ 'x' +BuildingSize['xsize'])
 				.attr('data-entityid', CityMapEntity['id']);
 
 			$('#grid-outer').append( f );
 		}
 
-		$('.entity').tooltip({
+		$('[data-original-title]').tooltip({
 			container: '#city-map-overlayBody',
 			html: true
 		});
@@ -417,8 +417,8 @@ let CityMap = {
 			}
 			if (building.production) {
 				for (let [type, value] of Object.entries(building.production)) {
-					// dont include townhall, because boosts dont apply
-					if (building.type === "main_building") continue;
+					// dont include townhall, because boosts dont apply & dont include goods or military buildings
+					if (building.type === "main_building" || building.type === "goods" || building.type === "military") continue;
 					if (CityMap.QIStats.resources[type] === undefined)
 						CityMap.QIStats.resources[type] = value;
 					else 
@@ -474,11 +474,6 @@ let CityMap = {
 	showQIBuildings: () => {
 		let boosts = Boosts.Sums;
 		let buildings = Object.values(CityMap.QIData);
-		buildings.sort((a, b) => {
-			if (a.cityentity_id < b.cityentity_id) return -1
-			if (a.cityentity_id > b.cityentity_id) return 1
-			return 0
-		})
 
 		let out = '<table class="foe-table qiBuildings">'
 		out += '<thead><tr><th colspan="2">'+i18n('Boxes.CityMap.Building')+'</th><th class="population textright"></th><th class="happiness textright"></th><th>'+i18n('Boxes.CityMap.Boosts')+'</th></tr></thead>'
@@ -488,50 +483,63 @@ let CityMap = {
 		for (let b of buildings) {
 			if (!uniques[b.cityentity_id]) 
 				uniques[b.cityentity_id] = 1
-			else
+			else 
 				uniques[b.cityentity_id] += 1
 		}
 
-		for (let [id,count] of Object.entries(uniques)) {
+		let uniqueBuildings = [];
+		for (let [id,count] of Object.entries(uniques)){
 			let building = CityMap.setQIBuilding(MainParser.CityEntities[id]);
-			if (building.type !== "impediment" && building.type !== "street") {
-				out += "<tr class='"+building.type+"'><td>" + building.name + "</td><td>" + (count>1?"x"+count:"") + "</td>"
-				out += '<td class="textright">' + building.population + "</td>"
-				out += '<td class="textright">' + building.euphoria + "</td>"
-				out += "<td>"
-				if (building.production !== null) {
-					if (building.type === "goods" || building.type === "military") {
-						out += (building.type === "goods" ? "+20 = " : "+10 = ")
-						out += (building.production.guild_raids_supplies ? '<span class="prod guild_raids_supplies">'+HTML.Format(building.production.guild_raids_supplies*-1.0)+'</span> ' : " ")
-						out += (building.production.guild_raids_money ? '<span class="prod guild_raids_money">'+HTML.Format(building.production.guild_raids_money*-1.0)+'</span> ' : "")	
-					}
-					else {
-						let eBoost = CityMap.QIStats.euphoriaBoost;
-						for (let [prod, value] of Object.entries(building.production)) {
-							let boost = 0;
-							if (prod.includes('suppl')) {
-								boost += boosts.guild_raids_supplies_production || 0;
-							}
-							else if (prod.includes('money')) {
-								boost += boosts.guild_raids_coins_production || 0;
-							}
+			building.count = count;
+			uniqueBuildings.push(building);
+		}
 
-							if (building.type === "main_building") {
-								out += srcLinks.icons(prod)+HTML.Format(value)+" ";
-							}
-							else
-								out += srcLinks.icons(prod)+HTML.Format(Math.round(value*(eBoost+(boost/100))))+" ";
+		uniqueBuildings.sort((a, b) => {
+			if (a.entityId < b.entityId) return -1
+			if (a.entityId > b.entityId) return 1
+			return 0
+		})
+
+		console.log(uniqueBuildings);
+
+		for (let building of uniqueBuildings) {
+			if (building.type === "impediment" || building.type === "street") continue;
+			out += "<tr class='"+building.type+"'><td><div class='building' data-original-title='"+building.name+"'><img src='" + srcLinks.get("/city/buildings/"+building.entityId.replace(/^(\D_)(.*?)/,"$1SS_$2")+".png",true) + "'></div></td><td>" + (building.count>1?"x"+building.count:"") + "</td>"
+			out += '<td class="textright">' + building.population + "</td>"
+			out += '<td class="textright">' + building.euphoria + "</td>"
+			out += "<td>"
+			if (building.production !== null) {
+				if (building.type === "goods" || building.type === "military") {
+					out += (building.type === "goods" ? "+20 = " : "+10 = ")
+					out += (building.production.guild_raids_supplies ? '<span class="prod guild_raids_supplies">'+HTML.Format(building.production.guild_raids_supplies*-1.0)+'</span> ' : " ")
+					out += (building.production.guild_raids_money ? '<span class="prod guild_raids_money">'+HTML.Format(building.production.guild_raids_money*-1.0)+'</span> ' : "")	
+				}
+				else {
+					let eBoost = CityMap.QIStats.euphoriaBoost;
+					for (let [prod, value] of Object.entries(building.production)) {
+						let boost = 0;
+						if (prod.includes('suppl')) {
+							boost += boosts.guild_raids_supplies_production || 0;
 						}
+						else if (prod.includes('money')) {
+							boost += boosts.guild_raids_coins_production || 0;
+						}
+
+						if (building.type === "main_building") {
+							out += srcLinks.icons(prod)+HTML.Format(value)+" ";
+						}
+						else
+							out += srcLinks.icons(prod)+HTML.Format(Math.round(value*(eBoost+(boost/100))))+" ";
 					}
 				}
-				if (building.boosts !== null) {
-					for (let boost of building.boosts) {
-						let percentChar = (boost.type.includes("action_points") ? "" : "%")
-						out += srcLinks.icons(boost.type)+boost.value+percentChar;
-					}
-				}
-				out += "</td></tr>";
 			}
+			if (building.boosts !== null) {
+				for (let boost of building.boosts) {
+					let percentChar = (boost.type.includes("action_points") ? "" : "%")
+					out += srcLinks.icons(boost.type)+boost.value+percentChar;
+				}
+			}
+			out += "</td></tr>";
 		}
 		out += "</tbody></table>";
 		return out;
@@ -557,7 +565,9 @@ let CityMap = {
 			euphoria: euphoria || 0,
 			population: population || 0,
 			production: production || null,
-			type: data.type
+			type: data.type,
+			entityId: data.asset_id,
+			count: 1,
 		}
 
 		return building
@@ -1311,7 +1321,6 @@ let CityMap = {
 			if (link.boosts !== undefined) 
 				chainedBuilding.boosts = [...chainedBuilding.boosts || [], ...link.boosts];
 			if (link.production !== undefined && link.production !== false) {
-				//console.log(link.production);
 				chainedBuilding.production = [...chainedBuilding.production, ...link.production];
 			}
 			link.chainBuilding.type = "linked";
@@ -2038,8 +2047,6 @@ let CityMap = {
 						if (reward.id.search("blueprint") !== -1)
 							lookupData = reward
 					}
-					// amount = lookupData.possible_rewards[0].reward.amount // hacky, because every chest item could have a different amount of blueprints
-					// console.log(metaData.name, amount)
 				}
 			}
 			else if (product.reward.type === "good") { // this can break if there is more than one generic goods reward for a building
@@ -2308,11 +2315,25 @@ let CityMap = {
 			hasRandomProduction: false,
 			eras: {}
 		}
+		
+
+		if (building.type === "production") {
+			productions = [productions[productions.length-1]];
+		}
+
 		if (productions) {
 			let goodsBoost = 0;
 			if (boosted)
 				goodsBoost = Boosts.Sums.goods_production || 1;
-			productions.forEach(production => {
+			
+			// only evaluate 1 day production for production buildings
+			if (building.type === "production") {
+				productions = [productions[productions.length-1]];
+			}
+
+			for (let production of productions) {
+				if (production === undefined) continue;
+
 				if (production.type === 'resources' || production.type === 'special_goods') {
 					Object.keys(production.resources).forEach(resourceName => {
 						let good = GoodsList.find(x => x.id === resourceName)
@@ -2383,7 +2404,7 @@ let CityMap = {
 					else 
 						goods.eras[goodEra] += parseInt(production.resources.amount);
 				}
-			})
+			}
 		}
 		if (Object.keys(goods).length > 0) {
 			return goods;

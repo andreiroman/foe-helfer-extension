@@ -1,10 +1,22 @@
 ## Changelog - Extension
 
+
+##### 3.13.1.0
+
+**Update**
+- Power leveling: Added a bunch of levels for Atomium
+
+**Bugfix**
+- FP Collector: Added some translations
+- Efficiency: Styling for search was a bit off, QI goods evaluation did not work
+
+---
+
 ##### 3.13.0.0
 **New**
 - GE Goods Use
 	- A threshold can be given
-	- If upon opening the GE unlock dialogue the precentual goods use is higher than the threshold, a box is generated listing the percentual goods use in relation to the treasury stock.
+	- If upon opening the GE unlock dialogue the percentual goods use is higher than the threshold, a box is generated listing the percentual goods use in relation to the treasury stock.
 	- Activate in settings!
 
 **Update**
@@ -12,6 +24,7 @@
 	- Added filters for GBs and limited buildings
 - Citymap
 	- Added building list to outposts and settlements
+	- adapted to upcoming changes to QI
 - Shop Assist
 	- Added rarity of offer
 	- Added current stock of shop ressources
@@ -20,6 +33,8 @@
 	- Now accounts for large FP Packages
 - Building Tooltip
 	- if fragments are produced the amount of needed fragments is now displayed as well
+- GBG Building Recommendation
+	- now closes automatically when battle/negotiation is started
 
 **Bugfix**
 - OwnPart Calculator

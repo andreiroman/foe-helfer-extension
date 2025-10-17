@@ -1,5 +1,18 @@
 ## Changelog - Extension
 
+
+##### 3.13.1.0
+
+**Update**
+- Power Leveln: Viele neue Stufen fürs Atomium hinzugefügt
+
+**Bugfix**
+- FP Collector: Übersetzungen hinzugefügt
+- Efficienzübersicht: Styling in der Suche angepasst, QI Güter Bewertung hat nicht funktioniert
+
+---
+
+
 ##### 3.13.0.0
 **Neu**
 - GEX Güter Verbrauch
@@ -12,6 +25,7 @@
 	- Neue Filter für LG und eingeschränkte Gebäude
 - Stadtübersicht
 	- Gebäudeliste für Siedlungen und Kolonien hinzugefügt
+	- an kommende Veränderungen der QI angepasst
 - Shop Assistent
 	- Seltenheitsgrad des Angebots hinzugefügt
 	- Bestand an Kaufwährung hinzugefügt
@@ -20,6 +34,8 @@
 	- Berücksichtigt nun auch große FP-Pakete
 - Gebäude Tooltip
 	- wenn Fragmente produziert werden, werden nun auch die Anzahl an benötigter Fragmente angezeigt
+- Gefechte Gebäudeempfehlung
+	- Box schließt sich nun automatisch wenn Kampf/Verhandlung gestartet wird
 
 **Bugfix**
 - Eigenanteilsrechner

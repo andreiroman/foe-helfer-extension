@@ -1345,10 +1345,16 @@ let Productions = {
 			hasRandomProductions: false,
 			doubleWhenMotivated: false
 		}
-		let productions = (current ? building.state.production : building.production)
+		let productions = (current ? building.state.production : building.production);
+
+		if (building.type === "production") {
+			productions = [productions[productions.length-1]];
+		}
 
 		if (productions) {
-			productions.forEach(production => {
+			for (let production of productions) {
+				if (production === undefined) continue;
+
 				if (production.type === 'random') {
 					production.resources.forEach(resource => {
 						if (resource.type+"s" === category) { // units 
@@ -1422,7 +1428,7 @@ let Productions = {
 						}
 					}
 				}
-			})
+			}
 		}
 
 		if (building.population && category === "population") {
@@ -2080,8 +2086,7 @@ let Productions = {
 						let roundSecondTile = secondTileValue > 100 || secondTileValue < -100 ?
 							Math.round(secondTileValue) : Math.round(secondTileValue * 100) / 100;
 
-						// Average the two values
-						let tileValue = Math.round((roundFirstTile + roundSecondTile) / 2 * 10) / 10;
+						let tileValue = Math.round((roundFirstTile + roundSecondTile) * 10) / 10;
 
 						h.push(`<td class="text-right tilevalue" data-number="${tileValue}">`)
 						h.push(HTML.Format(tileValue))
@@ -2409,7 +2414,7 @@ let Productions = {
 		else if (type === "strategy_points" || type === "medals" || type === "premium" || type === "money" || type === "supplies" || type === "units" || type === "clan_goods")
 			return Productions.getBuildingProductionByCategory(false, building, type).amount
 
-		else if (type.includes("goods")) {
+		else if (type.includes("goods") && !type.includes("guild_raids_")) {
 			let allGoods = CityMap.getBuildingGoodsByEra(false, building);
 
 			if (allGoods !== undefined) {
@@ -2458,14 +2463,14 @@ let Productions = {
 		}
 		else if (type.includes("guild_raids_") && !type.includes("att") && !type.includes("def")) {
 			if (building.boosts !== undefined) {
-				let qi_resources = 0
+				let qi_resources = 0;
 				for (const boost of building.boosts) {
-					let bType = boost.type.find(x => x === type)
+					let bType = boost.type.find(x => x === type);
 					if (bType !== undefined) {
-						qi_resources += boost.value		
+						qi_resources += boost.value;
 					}
 				}
-				return qi_resources
+				return qi_resources;
 			}
 		}
 		else
